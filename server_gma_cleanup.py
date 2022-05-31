@@ -7,11 +7,18 @@ import sys
 if __name__ == "__main__":
 	TotalSize = 0
 	global CollectionID
+	global ServerPath
 
 	if len( sys.argv ) <= 1:
 		CollectionID = input( "Collection ID parameter not specified. Please enter it now: " )
 	else:
 		CollectionID = sys.argv[1]
+
+	if len( sys.argv ) < 3:
+		ServerPath = input( "Server path parameter not specified. Please enter it now: " )
+	else:
+		ServerPath = sys.argv[2]
+	os.chdir( ServerPath )
 
 	if not os.path.exists( "srcds.exe" ) and not os.path.exists( "srcds_run" ):
 		print( "ERROR: Script is not in root folder of server." )
