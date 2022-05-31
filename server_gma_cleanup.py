@@ -1,5 +1,7 @@
+import humanize
 import json
 import os
+import pathlib
 import requests
 import shutil
 import sys
@@ -42,7 +44,7 @@ if __name__ == "__main__":
 		addonIDs.append( addon["publishedfileid"] )
 
 	print( "Scanning for unused files in the cache folder..." )
-	for path, dirs, files in os.walk( "garrysmod/cache" ):
+	for path, dirs, files in os.walk( "garrysmod/cache/srcds" ):
 		for name in files:
 			if os.path.splitext( name )[0] not in addonIDs:
 				finalPath = os.path.join( path, name )
@@ -55,9 +57,10 @@ if __name__ == "__main__":
 		for name in dirs:
 			if name not in addonIDs:
 				finalPath = os.path.join( path, name )
-				TotalSize += os.path.getsize( finalPath )
+				for file in pathlib.Path( finalPath ).rglob( '*' ):
+					TotalSize += file.stat().st_size
 				shutil.rmtree( finalPath )
 				print( f"Removing addon {finalPath}" )
 
 	print( "Finished!" )
-	print( f"Total storage saved: {TotalSize * 1000000} MB" )
+	print( f"Total storage saved: {humanize.naturalsize( TotalSize )}" )
