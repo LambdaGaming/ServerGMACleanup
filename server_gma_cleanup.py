@@ -1,6 +1,7 @@
 import json
 import os
 import requests
+import shutil
 import sys
 
 if __name__ == "__main__":
@@ -37,16 +38,19 @@ if __name__ == "__main__":
 	for path, dirs, files in os.walk( "garrysmod/cache" ):
 		for name in files:
 			if os.path.splitext( name )[0] not in addonIDs:
-				TotalSize += os.path.getsize( name )
-				os.remove( name )
-				print( f"Removing addon {name}" )
+				finalPath = os.path.join( path, name )
+				TotalSize += os.path.getsize( finalPath )
+				os.remove( finalPath )
+				print( f"Removing addon {finalPath}" )
 
+	print( "Scanning for unused files in the workshop folder..." )
 	for path, dirs, files in os.walk( "steam_cache/content/4000" ):
 		for name in dirs:
 			if name not in addonIDs:
-				TotalSize += os.path.getsize( name )
-				os.rmdir( name )
-				print( f"Removing addon {name}" )
+				finalPath = os.path.join( path, name )
+				TotalSize += os.path.getsize( finalPath )
+				shutil.rmtree( finalPath )
+				print( f"Removing addon {finalPath}" )
 
 	print( "Finished!" )
 	print( f"Total storage saved: {TotalSize * 1000000} MB" )
