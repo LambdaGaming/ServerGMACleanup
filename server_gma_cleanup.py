@@ -5,6 +5,7 @@ import sys
 
 if __name__ == "__main__":
 	TotalSize = 0
+	global CollectionID
 
 	if len( sys.argv ) <= 1:
 		CollectionID = input( "Collection ID parameter not specified. Please enter it now: " )
@@ -20,8 +21,8 @@ if __name__ == "__main__":
 	data = { "collectioncount": "1", "publishedfileids[0]": CollectionID }
 	collectionList = requests.post( url, data )
 
-	j = json.loads( collectionList )
-	children = j["response"]["collectiondetails"][0]["children"] or None
+	j = json.loads( collectionList.text )
+	children = j["response"]["collectiondetails"][0]["children"] if "children" in j["response"]["collectiondetails"][0] else None
 	print( "Successfully fetched collection info." )
 
 	if children is None:
@@ -34,13 +35,18 @@ if __name__ == "__main__":
 
 	print( "Scanning for unused files in the cache folder..." )
 	for path, dirs, files in os.walk( "garrysmod/cache" ):
-		if os.path.splitext( files )[0] not in addonIDs:
-			TotalSize += os.path.getsize( files )
-			os.remove( files )
-			print( f"Removing addon {files}" )
+		for name in files:
+			if os.path.splitext( name )[0] not in addonIDs:
+				TotalSize += os.path.getsize( name )
+				os.remove( name )
+				print( f"Removing addon {name}" )
 
 	for path, dirs, files in os.walk( "steam_cache/content/4000" ):
-		if dirs not in addonIDs:
-			TotalSize += os.path.getsize( dirs )
-			os.rmdir( dirs )
-			print( f"Removing addon {dirs}" )
+		for name in dirs:
+			if name not in addonIDs:
+				TotalSize += os.path.getsize( name )
+				os.rmdir( name )
+				print( f"Removing addon {name}" )
+
+	print( "Finished!" )
+	print( f"Total storage saved: {TotalSize * 1000000} MB" )
