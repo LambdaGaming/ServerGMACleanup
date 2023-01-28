@@ -60,6 +60,7 @@ if __name__ == "__main__":
 				shutil.rmtree( finalPath )
 				print( f"Removing addon {finalPath}" )
 
+	print( "Updating workshop manifest file..." )
 	acf = vdf.load( open( "steam_cache/appworkshop_4000.acf" ) )
 	for id in acf["AppWorkshop"]["WorkshopItemsInstalled"]:
 		if id not in addonIDs:
