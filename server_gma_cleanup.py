@@ -1,4 +1,4 @@
-import humanize
+import humanfriendly
 import json
 import os
 import pathlib
@@ -63,4 +63,4 @@ if __name__ == "__main__":
 				print( f"Removing addon {finalPath}" )
 
 	print( "Finished!" )
-	print( f"Total storage saved: {humanize.naturalsize( TotalSize )}" )
+	print( f"Total storage saved: {humanfriendly.format_size( TotalSize )}" )
