@@ -5,6 +5,7 @@ import pathlib
 import requests
 import shutil
 import sys
+import vdf
 
 if __name__ == "__main__":
 	TotalSize = 0
@@ -16,11 +17,8 @@ if __name__ == "__main__":
 	else:
 		CollectionID = sys.argv[1]
 
-	if len( sys.argv ) < 3:
-		ServerPath = input( "Server path parameter not specified. Please enter it now: " )
-	else:
-		ServerPath = sys.argv[2]
-	os.chdir( ServerPath )
+	if len( sys.argv ) >= 3:
+		os.chdir( sys.argv[2] )
 
 	if not os.path.exists( "srcds.exe" ) and not os.path.exists( "srcds_run" ):
 		print( "ERROR: Script is not in root folder of server." )
@@ -62,5 +60,15 @@ if __name__ == "__main__":
 				shutil.rmtree( finalPath )
 				print( f"Removing addon {finalPath}" )
 
+	acf = vdf.load( open( "steam_cache/appworkshop_4000.acf" ) )
+	for id in acf["AppWorkshop"]["WorkshopItemsInstalled"]:
+		if id not in addonIDs:
+			del acf["AppWorkshop"]["WorkshopItemsInstalled"][id]
+	for id in acf["AppWorkshop"]["WorkshopItemDetails"]:
+		if id not in addonIDs:
+			del acf["AppWorkshop"]["WorkshopItemDetails"][id]
+	vdf.dump( acf, open( "steam_cache/appworkshop_4000.acf", "w" ), True )
+
 	print( "Finished!" )
 	print( f"Total storage saved: {humanfriendly.format_size( TotalSize )}" )
+	input( "Press any key to continue..." )
