@@ -1,3 +1,4 @@
+import copy
 import humanfriendly
 import json
 import os
@@ -62,13 +63,14 @@ if __name__ == "__main__":
 
 	print( "Updating workshop manifest file..." )
 	acf = vdf.load( open( "steam_cache/appworkshop_4000.acf" ) )
+	temp = copy.deepcopy( acf )
 	for id in acf["AppWorkshop"]["WorkshopItemsInstalled"]:
 		if id not in addonIDs:
-			del acf["AppWorkshop"]["WorkshopItemsInstalled"][id]
+			del temp["AppWorkshop"]["WorkshopItemsInstalled"][id]
 	for id in acf["AppWorkshop"]["WorkshopItemDetails"]:
 		if id not in addonIDs:
-			del acf["AppWorkshop"]["WorkshopItemDetails"][id]
-	vdf.dump( acf, open( "steam_cache/appworkshop_4000.acf", "w" ), True )
+			del temp["AppWorkshop"]["WorkshopItemDetails"][id]
+	vdf.dump( temp, open( "steam_cache/appworkshop_4000.acf", "w" ), True )
 
 	print( "Finished!" )
 	print( f"Total storage saved: {humanfriendly.format_size( TotalSize )}" )
