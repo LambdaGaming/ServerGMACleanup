@@ -19,7 +19,7 @@ if __name__ == "__main__":
 		CollectionID = sys.argv[1]
 
 	if len( sys.argv ) >= 3:
-		os.chdir( sys.argv[2] )
+		os.chdir( os.path.expanduser( sys.argv[2] ) )
 
 	if not os.path.exists( "srcds.exe" ) and not os.path.exists( "srcds_run" ):
 		print( "ERROR: Script is not in root folder of server." )
