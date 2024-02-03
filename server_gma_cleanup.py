@@ -42,7 +42,7 @@ if __name__ == "__main__":
 	for addon in children:
 		addonIDs.append( addon["publishedfileid"] )
 
-	print( "Scanning for unused files in the cache folder..." )
+	print( "\nSearching game cache..." )
 	for path, dirs, files in os.walk( "garrysmod/cache/srcds" ):
 		for name in files:
 			if os.path.splitext( name )[0] not in addonIDs:
@@ -51,7 +51,7 @@ if __name__ == "__main__":
 				os.remove( finalPath )
 				print( f"Removing addon {finalPath}" )
 
-	print( "Scanning for unused files in the workshop folder..." )
+	print( "\nSearching Steam workshop cache..." )
 	for path, dirs, files in os.walk( "steam_cache/content/4000" ):
 		for name in dirs:
 			if name not in addonIDs:
@@ -60,6 +60,14 @@ if __name__ == "__main__":
 					TotalSize += file.stat().st_size
 				shutil.rmtree( finalPath )
 				print( f"Removing addon {finalPath}" )
+
+	print( "\nPurging userdata cache and depot cache..." )
+	for file in pathlib.Path( "userdata" ).rglob( '*' ):
+		TotalSize += file.stat().st_size
+	shutil.rmtree( "userdata" )
+	for file in pathlib.Path( "depotcache" ).rglob( '*' ):
+		TotalSize += file.stat().st_size
+	shutil.rmtree( "depotcache" )
 
 	print( "Updating workshop manifest file..." )
 	acf = vdf.load( open( "steam_cache/appworkshop_4000.acf" ) )
